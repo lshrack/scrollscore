@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+</head>
+<body>
+    <div id="controls">
+        <button id="startButton">Start Recording</button>
+        <button id="stopButton" disabled>Stop Recording</button>
+    </div>
+    <h1>Hello {{ pageNum }}</h1>
+    <canvas id="pdf-viewer"></canvas>
+    <script>
+        // Function to scroll to a specific page
+        function scrollToPage(pageNum) {
+            // Calculate the y-offset for scrolling
+            const yOffset = pageNum * window.innerHeight;
+            window.scrollTo(0, yOffset);
+        }
+
+        // Event listener to receive messages from Flask app
+        window.addEventListener('message', function(event) {
+            if (event.data.action === 'scrollToPage') {
+                scrollToPage(event.data.pageNum);
+            }
+        });
+
+        async function startRecording() {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = function(event) {
+                if (event.data.size > 0) {
+                    socket.send(event.data);
+                }
+            }
+
+            mediaRecorder.onstart = function() {
+                startButton.disabled = true;
+                stopButton.disabled = false;
+            }
+
+            mediaRecorder.start();
+        }
+
+        function stopRecording() {
+            mediaRecorder.stop();
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        }
+
+        function scrollPDF(pageNum, yVal) {
+            
+        }
+
+        // Initialize PDF.js
+        const pdfUrl = '/static/concatenated_002.pdf'; // URL to your PDF file
+        const pdfContainer = document.getElementById('pdf-viewer');
+        
+        pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
+            pdf.getPage({{pageNum}}).then(page => {
+                const viewport = page.getViewport({ scale: 1.5 });
+                const canvas = pdfContainer;
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                
+                page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                });
+            });
+        });
+
+        let mediaRecorder;
+        let socket = new WebSocket('ws://localhost:5000/audio-stream'); // Change the WebSocket URL as needed
+
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+
+        startButton.addEventListener('click', startRecording);
+        stopButton.addEventListener('click', stopRecording);
+    </script>
+</body>
+</html>
