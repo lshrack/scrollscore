@@ -14,7 +14,7 @@ def match(audio_graph, sheet_music_graph, sheet_music_indices):
 
     audio_times = [time - audio_times[0] for time in audio_times]
 
-    min_differences = []
+    min_difference = None
     best_start, best_end = None, None
     best_factor = None
     scaling_factors = [x/20 for x in range(5, 80, 1)]

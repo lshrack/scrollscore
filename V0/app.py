@@ -3,6 +3,7 @@ from flask_socketio import SocketIO, send
 import json
 import os
 import time
+from main import webm_to_y
 
 app = Flask(__name__)
 
@@ -21,9 +22,8 @@ def index():
         file = request.files['audio_data']
         file.save(filepath)
 
-        time.sleep(5)
         #return str(file_num * 200)
-        return str(4/11)
+        return webm_to_y(filepath, 11)
 
         #return render_template_string(template, pageNum = 1, request = "POST", yVal = 2000)
 

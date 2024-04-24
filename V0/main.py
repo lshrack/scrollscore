@@ -47,22 +47,23 @@ def match_audio_to_music(webm_path, ):
     return match_end
 
 def staff_index_to_y(staff_index, num_staff_bars):
-     return str(max((staff_index - 1) / num_staff_bars, 0))
+    return str(max((staff_index - 1) / num_staff_bars, 0))
 
 def webm_to_y(webm_path, num_staff_bars):
-     end_staff_index = match_audio_to_music(webm_path)
-     return staff_index_to_y(end_staff_index, num_staff_bars)
+    end_staff_index = match_audio_to_music(webm_path)
+    return staff_index_to_y(end_staff_index, num_staff_bars)
      
-for i in range(2,11):
-    for f in [f'audio_data/file{i}.wav',
-              f'audio_data/file{i}.opus',
-              f'intermediate_results/file{i}_basic_pitch.mid',
-              f'intermediate_results/file{i}_basic_pitch.wav']:
-         if(os.path.isfile(f)):
-            os.remove(f)
+if __name__ == '__main__':
+    for i in range(2,11):
+        for f in [f'audio_data/file{i}.wav',
+                f'audio_data/file{i}.opus',
+                f'intermediate_results/file{i}_basic_pitch.mid',
+                f'intermediate_results/file{i}_basic_pitch.wav']:
+            if(os.path.isfile(f)):
+                os.remove(f)
 
-    print(i)
-    match_audio_to_music(f'audio_data/file{i}.webm')
+        print(i)
+        match_audio_to_music(f'audio_data/file{i}.webm')
 
 
 
