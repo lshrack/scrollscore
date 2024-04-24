@@ -1,0 +1,146 @@
+// This code is largely sourced from this Stack Overflow post:
+// https://stackoverflow.com/questions/60032983/record-voice-with-recorder-js-and-upload-it-to-python-flask-server-but-wav-file
+
+
+URL = window.URL;
+
+var gumStream;
+var rec;
+var input;
+
+var AudioContext = window.AudioContext;
+var audioContext;
+
+var recordButton = document.getElementById("recordButton");
+var stopButton = document.getElementById("stopButton");
+var pauseButton = document.getElementById("pauseButton");
+
+recordButton.addEventListener("click", startRecording);
+stopButton.addEventListener("click", stopRecording);
+pauseButton.addEventListener("click", pauseRecording);
+
+function startRecording(){
+    console.log("Record button clicked");
+    var constraints = { audio: true, video:false };
+
+    recordButton.disabled = true;
+    stopButton.disabled = false;
+    pauseButton.disabled = false;
+
+    navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+        console.log("getUserMedia() success, stream created, initializing Recorder.js ...");
+        audioContext = new AudioContext();
+        document.getElementById("formats").innerHTML="Format: 1 channel pcm @ "+audioContext.sampleRate/1000+"kHz"
+        gumStream = stream;
+        //input = audioContext.createMediaStreamSource(stream);
+        //rec = new MediaRecorder(input,{numChannels:1});
+        rec = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+        rec.start();
+        console.log("Recording started");
+
+        var chunks = [];
+        rec.onstop = (e) => {
+            console.log("data available after MediaRecorder.stop() called.");
+          
+            const audio = document.createElement("audio");
+            audio.controls = true;
+            const blob = new Blob(chunks, { type: rec.mimeType });
+            createDownloadLink(blob);
+            //const audioURL = window.URL.createObjectURL(blob);
+            //audio.src = audioURL;
+            //console.log("recorder stopped");
+          };
+          
+          rec.ondataavailable = (e) => {
+            console.log("got data available");
+            chunks.push(e.data);
+          };
+
+    }).catch(function(err) {
+        console.log(err);
+        //enable the record button if getUserMedia() fails
+        recordButton.disabled = false;
+        stopButton.disabled = true;
+        pauseButton.disabled = true
+    });
+}
+
+function pauseRecording(){
+    console.log("pause button clicked, state = ", rec.state);
+
+    if(rec.state == "recording"){
+        rec.stop();
+        pauseButton.innerHTML="Resume";
+    }
+    else{
+        rec.start();
+        pauseButton.innerHTML="Pause";
+    };
+}
+
+function stopRecording(){
+    console.log("stopButton clicked");
+
+    stopButton.disabled = true;
+    recordButton.disabled = false;
+    pauseButton.disabled = true;
+
+    pauseButton.innerHTML="Pause";
+    rec.stop();
+
+    gumStream.getAudioTracks()[0].stop();
+    //rec.requestData();
+
+}
+
+function createDownloadLink(blob){
+    var url = URL.createObjectURL(blob);
+    var au = document.createElement('audio');
+    var li = document.createElement('li');
+    var link = document.createElement('a');
+
+    var filename = new Date().toISOString();
+
+    au.controls = true;
+    au.src = url;
+
+    link.href = url;
+    link.download = filename+".wav"; //download forces the browser to donwload the file using the  filename
+    link.innerHTML = "Save to disk";
+
+    li.appendChild(au);
+    li.appendChild(document.createTextNode(filename+".wav "));
+    li.appendChild(link);
+
+    var upload = document.createElement('a');
+    upload.href="#";
+    upload.innerHTML = "Upload";
+    upload.addEventListener("click", function(event){
+          var xhr=new XMLHttpRequest();
+          xhr.onload=function(e) {
+              if(this.readyState === 4) {
+                  console.log("Server returned: ",e.target.responseText);
+              }
+          };
+          var fd=new FormData();
+          fd.append("audio_data",blob, filename);
+          xhr.open("POST","/",true);
+          xhr.send(fd);
+    })
+    li.appendChild(document.createTextNode (" "))//add a space in between
+    li.appendChild(upload)//add the upload link to li
+
+    recordingsList.appendChild(li);
+
+    var xhr=new XMLHttpRequest();
+    xhr.onload=function(e) {
+        if(this.readyState === 4) {
+            console.log("Server returned: ",e.target.responseText);
+        }
+    };
+    var fd=new FormData();
+    fd.append("audio_data",blob, filename);
+    xhr.open("POST","/",true);
+    xhr.send(fd);
+}
+

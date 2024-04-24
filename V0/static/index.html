@@ -10,10 +10,15 @@
 </head>
 <body>
     <div id="controls">
-        <button id="startButton">Start Recording</button>
+        <button id="recordButton">Start Recording</button>
+        <button id="pauseButton" disabled>Pause Recording</button>
         <button id="stopButton" disabled>Stop Recording</button>
     </div>
-    <div><h1>Hi! {{pageNum}}</h1></div>
+
+    <div id="formats">Format: start recording to see sample rate</div>
+    <p><strong>Recordings:</strong></p>
+    <ol id="recordingsList"></ol>
+
     <div id="holder">
         <div id = "wrapper1" class = "canvas-wrapper"></div>
         <div id = "wrapper2" class = "canvas-wrapper"></div>
@@ -21,101 +26,11 @@
         <div id = "wrapper4" class = "canvas-wrapper"></div>
         <div id = "wrapper5" class = "canvas-wrapper"></div>
     </div>
-    <canvas id="pdf-viewer"></canvas>
+    <script src="/static/js/pdf.js"></script>
+    <script src="static/js/record.js"></script>
     <script>
-        // Function to scroll to a specific page
-        function scrollToPage(pageNum) {
-            const yOffset = pageNum * window.innerHeight;
-            console.log(yOffset);
-            window.scroll(0, yOffset);
-        }
-
-        // Event listener to receive messages from Flask app
-        window.addEventListener('message', function(event) {
-            if (event.data.action === 'scrollToPage') {
-                scrollToPage(event.data.pageNum);
-            }
-        });
-
-        async function startRecording() {
-            console.log("start recording");
-            window.scrollTo(0,800);
-
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-
-            mediaRecorder.ondataavailable = function(event) {
-                if (event.data.size > 0) {
-                    socket.send(event.data);
-                }
-            }
-
-            mediaRecorder.onstart = function() {
-                startButton.disabled = true;
-                stopButton.disabled = false;
-            }
-
-            mediaRecorder.start();
-            
-        }
-
-        function stopRecording() {
-            window.scrollTo(0,800);
-            mediaRecorder.stop();
-            startButton.disabled = false;
-            stopButton.disabled = true;
-        }
-        
-
-        function renderPDF(url, canvasContainer, options) {
-            options = options || { scale: 1 };
-                
-            function renderPage(page) {
-                var viewport = page.getViewport({ scale: 1.5 });
-                //var wrapper = document.createElement("div");
-                var wrapper = document.getElementById("wrapper" + page.pageNumber.toString());
-                wrapper.className = "canvas-wrapper";
-                var canvas = document.createElement('canvas');
-                var ctx = canvas.getContext('2d');
-                var renderContext = {
-                canvasContext: ctx,
-                viewport: viewport
-                };
-                
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                wrapper.appendChild(canvas)
-                console.log("HI")
-                canvasContainer.appendChild(wrapper);
-                
-                page.render(renderContext);
-            }
-
-            function renderPages(pdfDoc) {
-                for(var num = 1; num <= pdfDoc.numPages; num++)
-                    pdfDoc.getPage(num).then(page => renderPage(page));
-            }
-
-            pdfjsLib.disableWorker = true;
-            pdfjsLib.getDocument(url).promise.then(renderPages);
-        }   
-        
-
-        renderPDF('/static/concatenated_002.pdf', document.getElementById('holder'));
-
-        const startButton = document.getElementById('startButton');
-        const stopButton = document.getElementById('stopButton');
-
-        startButton.addEventListener('click', startRecording);
-        stopButton.addEventListener('click', stopRecording);
-        
         $(function() {
-            console.log("pageNum", {{pageNum }})
-            console.log("obj", $("#wrapper" + {{pageNum}}))
-            console.log("offset", $("#wrapper" + {{pageNum}}).offset())
-            x = $("#wrapper" + {{pageNum}}).offset().top;
-            console.log(x);
-        $("html, body").animate({ scrollTop: x }, 500);
+        $("html, body").animate({ scrollTop: {{yVal}} }, 500);
         });
     </script>
 </body>
