@@ -1,5 +1,7 @@
 from flask import Flask, render_template_string, request, render_template
 from flask_socketio import SocketIO, send
+from distutils.log import debug 
+from fileinput import filename
 import json
 import os
 import time
@@ -22,24 +24,48 @@ def index():
         file = request.files['audio_data']
         file.save(filepath)
 
+        for f in [f'audio_data/file{file_num}.wav',
+                f'audio_data/file{file_num}.opus',
+                f'intermediate_results/file{file_num}_basic_pitch.mid',
+                f'intermediate_results/file{file_num}_basic_pitch.wav']:
+            if(os.path.isfile(f)):
+                os.remove(f)
+
         #return str(file_num * 200)
         return webm_to_y(filepath, 11)
 
         #return render_template_string(template, pageNum = 1, request = "POST", yVal = 2000)
 
     else:
-        return render_template_string(template, pageNum = 1, yVal = 0)
+        # with open('intermediate_results/curr_pos.txt', 'w') as f:
+        #     f.write(0)
+        return render_template_string(template, pageNum = 1, yVal = 0, pdfName = '/static/concatenated_002.pdf')
 
 # Endpoint to trigger scrolling
 @app.route('/scroll')
 def scroll_to_page():
     y_val = int(request.args.get('yVal'))
-    # Send a message to the client to scroll to the specified page
-    #message = {'action': 'scrollToPage', 'pageNum': page_num}
-    #return json.dumps(message)
     with open('static/index.html', 'r') as file:
         template = file.read()
     return render_template_string(template, section = 'holder', yVal=y_val)
+
+@app.route('/upload')
+def upload():
+    with open('static/upload.html', 'r') as file:
+        template = file.read()
+    return render_template_string(template)
+
+@app.route('/success', methods = ['POST'])   
+def success():   
+    if request.method == 'POST':   
+        f = request.files['file'] 
+        filepath = f'static/user_pdfs/{f.filename}'
+        f.save(filepath)   
+        with open('static/index.html', 'r') as file:
+            template = file.read()
+        return render_template_string(template, pdfName = filepath, yVal = 0)   
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

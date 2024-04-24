@@ -31,5 +31,4 @@ function renderPDF(url, canvasContainer, options) {
     pdfjsLib.getDocument(url).promise.then(renderPages);
 }   
 
-
-renderPDF('/static/concatenated_002.pdf', document.getElementById('holder'));
+console.log("hi, I'm in pdf.js")

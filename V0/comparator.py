@@ -35,11 +35,12 @@ def match(audio_graph, sheet_music_graph, sheet_music_indices):
                 end_time = scaled_audio_times[-1] - scaled_audio_times[0] + sheet_times[start]
                 best_end = index_of_time(end_time, sheet_times)
                 best_factor = factor
-
     
     return (match_index(best_start, sheet_music_indices),
             match_index(best_end, sheet_music_indices),
             best_factor)
+
+
 
     
         

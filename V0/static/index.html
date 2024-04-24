@@ -10,14 +10,12 @@
 </head>
 <body>
     <div id="controls">
-        <button id="recordButton">Start Recording</button>
-        <button id="pauseButton" disabled>Pause Recording</button>
-        <button id="stopButton" disabled>Stop Recording</button>
+        <button id="recordButton">Start Playing</button>
+        <button id="pauseButton" disabled>Pause</button>
+        <button id="stopButton" disabled>Finish Playing</button>
     </div>
 
     <div id="formats">Format: start recording to see sample rate</div>
-    <p><strong>Recordings:</strong></p>
-    <ol id="recordingsList"></ol>
 
     <div id="holder">
         <div id = "wrapper1" class = "canvas-wrapper"></div>
@@ -27,6 +25,9 @@
         <div id = "wrapper5" class = "canvas-wrapper"></div>
     </div>
     <script src="/static/js/pdf.js"></script>
+    <script>
+        renderPDF('/{{pdfName}}', document.getElementById('holder'));
+    </script>
     <script src="static/js/record.js"></script>
     <script>
         $(function() {
