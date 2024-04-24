@@ -42,13 +42,10 @@ function startRecording(){
         rec.onstop = (e) => {
             console.log("data available after MediaRecorder.stop() called.");
           
-            const audio = document.createElement("audio");
-            audio.controls = true;
+            //const audio = document.createElement("audio");
+            //audio.controls = true;
             const blob = new Blob(chunks, { type: rec.mimeType });
             createDownloadLink(blob);
-            //const audioURL = window.URL.createObjectURL(blob);
-            //audio.src = audioURL;
-            //console.log("recorder stopped");
           };
           
           rec.ondataavailable = (e) => {
@@ -58,7 +55,6 @@ function startRecording(){
 
     }).catch(function(err) {
         console.log(err);
-        //enable the record button if getUserMedia() fails
         recordButton.disabled = false;
         stopButton.disabled = true;
         pauseButton.disabled = true
@@ -89,8 +85,6 @@ function stopRecording(){
     rec.stop();
 
     gumStream.getAudioTracks()[0].stop();
-    //rec.requestData();
-
 }
 
 function createDownloadLink(blob){    
@@ -100,18 +94,9 @@ function createDownloadLink(blob){
     xhr.onload=function(e) {
         if(this.readyState === 4) {
             console.log("Server returned: ",e.target.responseText);
-
-            console.log(document.getElementsByClassName("html", "body"));
-            $("html, body").animate({ scrollTop: e.target.responseText }, 500);
             $(document).ready(function() {
-                console.log($("html, body"));
                 $("html, body").animate({ scrollTop: e.target.responseText }, 500);
             })
-
-            document.querySelector('body').animate({ scrollTop: e.target.responseText }, 500);
-            // $(function() {
-            //     $("html, body").animate({ scrollTop: e.target.responseText }, 500);
-            // });
         }
     };
 

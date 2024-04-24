@@ -11,9 +11,8 @@ def index():
         template = file.read()
 
     if request.method == 'POST':
-        f = open('./audio_data/file.wav', 'wb')
-        f.write(request.get_data("audio_data"))
-        f.close()
+        file = request.files['audio_data']
+        file.save('./audio_data/file.webm')
         return "1000"
 
         #return render_template_string(template, pageNum = 1, request = "POST", yVal = 2000)
