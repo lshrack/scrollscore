@@ -65,14 +65,15 @@
             startButton.disabled = false;
             stopButton.disabled = true;
         }
+        
 
         function renderPDF(url, canvasContainer, options) {
             options = options || { scale: 1 };
                 
-            function renderPage(page, pageNum) {
+            function renderPage(page) {
                 var viewport = page.getViewport({ scale: 1.5 });
-                var wrapper = document.createElement("div");
-                wrapper.id = "wrapper" + page.pageNumber.toString();
+                //var wrapper = document.createElement("div");
+                var wrapper = document.getElementById("wrapper" + page.pageNumber.toString());
                 wrapper.className = "canvas-wrapper";
                 var canvas = document.createElement('canvas');
                 var ctx = canvas.getContext('2d');
@@ -92,7 +93,7 @@
 
             function renderPages(pdfDoc) {
                 for(var num = 1; num <= pdfDoc.numPages; num++)
-                    pdfDoc.getPage(num).then(page => renderPage(page, num));
+                    pdfDoc.getPage(num).then(page => renderPage(page));
             }
 
             pdfjsLib.disableWorker = true;
@@ -107,32 +108,14 @@
 
         startButton.addEventListener('click', startRecording);
         stopButton.addEventListener('click', stopRecording);
-
-        window.scrollTo(0, 800);
-        console.log("hi");
-        console.log({{section}});
+        
         $(function() {
-            x = ({{ pageNum }}).toString();
-            console.log("x = ", x)
-        $("html, body").animate({ scrollTop: $("#wrapper" + x).offset().top }, 500);
-        });
-    </script>
-
-    <script>
-        console.log("hi i'm here #wrapper{{pageNum}}")
-        x = ({{ pageNum }}).toString();
-        console.log("x = ", x);
-        str = "#wrapper" + x
-        console.log("str", str)
-        obj = $(str)
-        console.log("obj", obj)
-
-        offset = $("#wrapper" + x).offset();
-        console.log("offset", offset);
-        $(function() {
-            x = ({{ pageNum }}).toString();
-            console.log("x = ", x)
-        $("html, body").animate({ scrollTop: $("#holder").offset().top }, 500);
+            console.log("pageNum", {{pageNum }})
+            console.log("obj", $("#wrapper" + {{pageNum}}))
+            console.log("offset", $("#wrapper" + {{pageNum}}).offset())
+            x = $("#wrapper" + {{pageNum}}).offset().top;
+            console.log(x);
+        $("html, body").animate({ scrollTop: x }, 500);
         });
     </script>
 </body>

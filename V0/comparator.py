@@ -18,13 +18,16 @@ def match(audio_graph, sheet_music_graph, sheet_music_indices):
     best_start, best_end = None, None
     best_factor = None
     scaling_factors = [x/20 for x in range(5, 80, 1)]
+    scaled_audio_times_list = []
     for factor in scaling_factors:
-        scaled_audio_times = scale_times(audio_times, factor)
+        scaled_audio_times_list.append(scale_times(audio_times, factor))
 
-        for start in range(len(sheet_notes)):
-            sheet_times = [time - sheet_times[0] for time in sheet_times]
+    for start in range(len(sheet_notes)):
+        sheet_times_shifted = [time - sheet_times[start] for time in sheet_times[start:]]
+
+        for scaled_audio_times in scaled_audio_times_list:
             difference = area_between(audio_notes, scaled_audio_times,
-                                      sheet_notes[start:], sheet_times[start:])
+                                        sheet_notes[start:], sheet_times_shifted)
             if (difference is not None and
                 (min_difference is None or difference < min_difference)):
                 min_difference = difference
