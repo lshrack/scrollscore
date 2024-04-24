@@ -104,7 +104,7 @@ function createDownloadLink(blob){
         if(this.readyState === 4) {
             console.log("Server returned: ",e.target.responseText);
             $(document).ready(function() {
-                $("html, body").animate({ scrollTop: e.target.responseText }, 500);
+                $("html, body").animate({ scrollTop: e.target.responseText * document.body.scrollHeight }, 100);
             })
         }
     };

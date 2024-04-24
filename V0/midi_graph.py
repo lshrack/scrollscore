@@ -14,7 +14,7 @@ def midi_to_graph(mid_path, include_end = False, filter_range = None):
     """
     mid = MidiFile(mid_path)
 
-    assert len(mid.tracks) == 2, "expected 2 tracks (one metadata, one musical information)"
+    #assert len(mid.tracks) == 2, "expected 2 tracks (one metadata, one musical information)"
 
     time_tracker = 0
     end = 0
@@ -111,18 +111,41 @@ def area_between(audio_notes, audio_times, sheet_notes, sheet_times, num_steps =
 
     step_size = (end_time - start_time) / num_steps
     sum_diffs = 0
-    count = 0
 
     times = [start_time + i * step_size for i in range(num_steps)]
 
     for t in times:
         sum_diffs += abs(f1(t) - f2(t))
-        count += 1
 
-    assert(count == num_steps)
 
     return sum_diffs / num_steps
 
+def area_between_fast(audio_notes, audio_times, sheet_notes, sheet_times, num_steps = 1000):
+    assert (audio_times == sorted(audio_times) and
+            sheet_times == sorted(sheet_times)), "times arrays should be in sorted order"
+    
+    start_time = max(audio_times[0], sheet_times[0])
+    end_time = min(audio_times[-1], sheet_times[-1])
+
+    if end_time - start_time < 0.75 * (audio_times[-1] - audio_times[0]):
+        return None
+    
+    step_size = (end_time - start_time) / num_steps
+    sum_diffs = 0
+    a_i = 0
+    s_i = 0
+
+    times = [start_time + i * step_size for i in range(num_steps)]
+
+    for time in times:
+        while audio_times[a_i] <= time:
+            a_i += 1
+        while sheet_times[s_i] <= time:
+            s_i += 1
+        
+        sum_diffs += abs(audio_notes[a_i-1] - sheet_notes[s_i-1])
+    
+    return sum_diffs / num_steps
 
 def index_of_time(time, note_times):
     i = 0

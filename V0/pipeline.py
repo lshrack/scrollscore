@@ -2,6 +2,8 @@ from pdf_to_pngs import pdf_to_pngs
 from png_to_midis import generate_midis
 from audio_to_midi import audio_to_midi
 from midi_graph import midi_to_graph, midi_list_to_graph
+from comparator import match
+
 
 pdf_path = 'data/concatenated_002.pdf'
 output_folder = 'intermediate_results/'

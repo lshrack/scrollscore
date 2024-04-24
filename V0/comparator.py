@@ -1,4 +1,4 @@
-from midi_graph import area_between, scale_times, index_of_time
+from midi_graph import area_between, scale_times, index_of_time, area_between_fast
 
 def match_index(index, sheet_music_indices):
     staff_index = 0
@@ -14,7 +14,7 @@ def match(audio_graph, sheet_music_graph, sheet_music_indices):
 
     audio_times = [time - audio_times[0] for time in audio_times]
 
-    min_difference = None
+    min_differences = []
     best_start, best_end = None, None
     best_factor = None
     scaling_factors = [x/20 for x in range(5, 80, 1)]
@@ -26,8 +26,8 @@ def match(audio_graph, sheet_music_graph, sheet_music_indices):
         sheet_times_shifted = [time - sheet_times[start] for time in sheet_times[start:]]
 
         for scaled_audio_times in scaled_audio_times_list:
-            difference = area_between(audio_notes, scaled_audio_times,
-                                        sheet_notes[start:], sheet_times_shifted)
+            difference = area_between_fast(audio_notes, scaled_audio_times,
+                                        sheet_notes[start:], sheet_times_shifted, num_steps = 1000)
             if (difference is not None and
                 (min_difference is None or difference < min_difference)):
                 min_difference = difference
