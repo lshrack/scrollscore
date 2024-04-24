@@ -9,7 +9,7 @@ app = Flask(__name__)
 def index():
     with open('static/index.html', 'r') as file:
         template = file.read()
-    return render_template_string(template, pageNum = 1)
+    return render_template_string(template, pageNum = 1, section = 'holder')
 
 @app.route('/test')
 def test():
@@ -27,7 +27,7 @@ def scroll_to_page():
     #return json.dumps(message)
     with open('static/index.html', 'r') as file:
         template = file.read()
-    return render_template_string(template, pageNum = page_num)
+    return render_template_string(template, pageNum = page_num, section = 'holder')
 
 if __name__ == '__main__':
     app.run(debug=True)
