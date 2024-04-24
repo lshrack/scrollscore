@@ -7,6 +7,7 @@ URL = window.URL;
 var gumStream;
 var rec;
 var input;
+var interval;
 
 var AudioContext = window.AudioContext;
 var audioContext;
@@ -38,19 +39,20 @@ function startRecording(){
         rec.start();
         console.log("Recording started");
 
+        interval = window.setInterval(saveFile, 10000);
+
         var chunks = [];
         rec.onstop = (e) => {
             console.log("data available after MediaRecorder.stop() called.");
-          
-            //const audio = document.createElement("audio");
-            //audio.controls = true;
             const blob = new Blob(chunks, { type: rec.mimeType });
             createDownloadLink(blob);
           };
           
           rec.ondataavailable = (e) => {
             console.log("got data available");
-            chunks.push(e.data);
+            //chunks.push(e.data);
+            chunks = [e.data];
+            //console.log(chunks.length)
           };
 
     }).catch(function(err) {
@@ -59,6 +61,12 @@ function startRecording(){
         stopButton.disabled = true;
         pauseButton.disabled = true
     });
+}
+
+function saveFile(){
+    console.log("saving off a file");
+    rec.stop();
+    rec.start();
 }
 
 function pauseRecording(){
@@ -75,6 +83,7 @@ function pauseRecording(){
 }
 
 function stopRecording(){
+    window.clearInterval(interval);
     console.log("stopButton clicked");
 
     stopButton.disabled = true;
