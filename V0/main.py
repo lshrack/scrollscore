@@ -2,7 +2,7 @@ from midi_graph import midi_list_to_graph, midi_to_graph, scale_times
 from webm_to_wav import save_as_wav
 from audio_to_midi import audio_to_midi
 import pickle
-from comparator import match
+from comparator import match, match_fixed
 import sys
 import os
 import time
@@ -38,7 +38,7 @@ def match_audio_to_music(webm_path, ):
     sys.stdout = old_stdout
     
 
-    match_start, match_end, match_factor = match((audio_notes, audio_note_times),
+    match_start, match_end, match_factor = match_fixed((audio_notes, audio_note_times),
             (notes, note_times),
             start_indices)
     print(match_start, match_end, match_factor)

@@ -37,8 +37,8 @@ def index():
         #return render_template_string(template, pageNum = 1, request = "POST", yVal = 2000)
 
     else:
-        # with open('intermediate_results/curr_pos.txt', 'w') as f:
-        #     f.write(0)
+        with open('intermediate_results/curr_pos.txt', 'w') as f:
+            f.write(0)
         return render_template_string(template, pageNum = 1, yVal = 0, pdfName = '/static/concatenated_002.pdf')
 
 # Endpoint to trigger scrolling
@@ -63,6 +63,8 @@ def success():
         f.save(filepath)   
         with open('static/index.html', 'r') as file:
             template = file.read()
+        with open('intermediate_results/curr_pos.txt', 'w') as f:
+            f.write(str(0))
         return render_template_string(template, pdfName = filepath, yVal = 0)   
 
 
