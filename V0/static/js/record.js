@@ -93,51 +93,28 @@ function stopRecording(){
 
 }
 
-function createDownloadLink(blob){
-    var url = URL.createObjectURL(blob);
-    var au = document.createElement('audio');
-    var li = document.createElement('li');
-    var link = document.createElement('a');
-
+function createDownloadLink(blob){    
     var filename = new Date().toISOString();
-
-    au.controls = true;
-    au.src = url;
-
-    link.href = url;
-    link.download = filename+".wav"; //download forces the browser to donwload the file using the  filename
-    link.innerHTML = "Save to disk";
-
-    li.appendChild(au);
-    li.appendChild(document.createTextNode(filename+".wav "));
-    li.appendChild(link);
-
-    var upload = document.createElement('a');
-    upload.href="#";
-    upload.innerHTML = "Upload";
-    upload.addEventListener("click", function(event){
-          var xhr=new XMLHttpRequest();
-          xhr.onload=function(e) {
-              if(this.readyState === 4) {
-                  console.log("Server returned: ",e.target.responseText);
-              }
-          };
-          var fd=new FormData();
-          fd.append("audio_data",blob, filename);
-          xhr.open("POST","/",true);
-          xhr.send(fd);
-    })
-    li.appendChild(document.createTextNode (" "))//add a space in between
-    li.appendChild(upload)//add the upload link to li
-
-    recordingsList.appendChild(li);
 
     var xhr=new XMLHttpRequest();
     xhr.onload=function(e) {
         if(this.readyState === 4) {
             console.log("Server returned: ",e.target.responseText);
+
+            console.log(document.getElementsByClassName("html", "body"));
+            $("html, body").animate({ scrollTop: e.target.responseText }, 500);
+            $(document).ready(function() {
+                console.log($("html, body"));
+                $("html, body").animate({ scrollTop: e.target.responseText }, 500);
+            })
+
+            document.querySelector('body').animate({ scrollTop: e.target.responseText }, 500);
+            // $(function() {
+            //     $("html, body").animate({ scrollTop: e.target.responseText }, 500);
+            // });
         }
     };
+
     var fd=new FormData();
     fd.append("audio_data",blob, filename);
     xhr.open("POST","/",true);

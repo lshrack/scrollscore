@@ -14,8 +14,9 @@ def index():
         f = open('./audio_data/file.wav', 'wb')
         f.write(request.get_data("audio_data"))
         f.close()
+        return "1000"
 
-        return render_template_string(template, pageNum = 1, request = "POST", yVal = 2000)
+        #return render_template_string(template, pageNum = 1, request = "POST", yVal = 2000)
 
     else:
         return render_template_string(template, pageNum = 1, yVal = 1000)
