@@ -35,7 +35,7 @@ function startRecording(){
         gumStream = stream;
         //input = audioContext.createMediaStreamSource(stream);
         //rec = new MediaRecorder(input,{numChannels:1});
-        rec = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+        rec = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
         rec.start();
         console.log("Recording started");
 

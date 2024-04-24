@@ -12,7 +12,7 @@ def index():
         template = file.read()
 
     if request.method == 'POST':
-        files = os.listdir('./audio_data')
+        files = [file for file in os.listdir('./audio_data') if file[0] != '.']
         nums = [int(file.replace('file', '').replace('.webm', '')) for file in files]
         file_num = max(nums) + 1 if len(nums) > 0 else 1
         filepath = f'./audio_data/file{file_num}.webm'
