@@ -5,11 +5,11 @@ import scipy.ndimage
 import numpy as np
 from numpy import ndarray
 
-from oemer import layers
-from oemer.inference import predict
-from oemer.utils import find_closest_staffs, get_global_unit_size, get_unit_size
-from oemer.logger import get_logger
-from oemer.bbox import (
+from . import layers
+from .inference import predict
+from .utils import find_closest_staffs, get_global_unit_size, get_unit_size
+from .logger import get_logger
+from .bbox import (
     BBox,
     get_center,
     merge_nearby_bbox,

@@ -50,7 +50,7 @@ def match_fixed(audio_graph, sheet_music_graph, sheet_music_indices):
     min_difference = None
     best_start, best_end = None, None
     best_factor = None
-    scaling_factors = [x/20 for x in range(5, 80, 1)]
+    scaling_factors = [x/20 for x in range(5, 200, 1)]
     scaled_audio_times_list = []
     for factor in scaling_factors:
         scaled_audio_times_list.append(scale_times(audio_times, factor))

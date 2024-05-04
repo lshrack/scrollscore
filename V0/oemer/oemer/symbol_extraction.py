@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy import ndarray
 
-from oemer import layers
-from oemer import exceptions as E
-from oemer.inference import predict
-from oemer.utils import get_global_unit_size, slope_to_degree, get_unit_size, find_closest_staffs
-from oemer.logger import get_logger
-from oemer.general_filtering_rules import filter_out_of_range_bbox, filter_out_small_area
-from oemer.bbox import (
+from . import layers
+from . import exceptions as E
+from .inference import predict
+from .utils import get_global_unit_size, slope_to_degree, get_unit_size, find_closest_staffs
+from .logger import get_logger
+from .general_filtering_rules import filter_out_of_range_bbox, filter_out_small_area
+from .bbox import (
     BBox,
     merge_nearby_bbox,
     rm_merge_overlap_bbox,

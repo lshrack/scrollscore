@@ -6,6 +6,7 @@ import json
 import os
 import time
 from main import webm_to_y
+from process_pdf import pdf_to_mxls
 
 app = Flask(__name__)
 
@@ -38,7 +39,7 @@ def index():
 
     else:
         with open('intermediate_results/curr_pos.txt', 'w') as f:
-            f.write(0)
+            f.write('0')
         return render_template_string(template, pageNum = 1, yVal = 0, pdfName = '/static/concatenated_002.pdf')
 
 # Endpoint to trigger scrolling
@@ -61,6 +62,9 @@ def success():
         f = request.files['file'] 
         filepath = f'static/user_pdfs/{f.filename}'
         f.save(filepath)   
+        print("about to run PDF => MXLs")
+        print(pdf_to_mxls(filepath, 'intermediate_results/'))
+
         with open('static/index.html', 'r') as file:
             template = file.read()
         with open('intermediate_results/curr_pos.txt', 'w') as f:

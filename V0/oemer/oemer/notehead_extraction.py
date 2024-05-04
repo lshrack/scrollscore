@@ -7,12 +7,12 @@ import scipy.ndimage
 import numpy as np
 from numpy import ndarray
 
-from oemer import layers
-from oemer.constant import NoteHeadConstant as nhc
-from oemer.bbox import BBox, get_bbox, get_center, merge_nearby_bbox, rm_merge_overlap_bbox, to_rgb_img
-from oemer.utils import get_unit_size, find_closest_staffs, get_global_unit_size
-from oemer.logger import get_logger
-from oemer.staffline_extraction import Staff
+from . import layers
+from .constant import NoteHeadConstant as nhc
+from .bbox import BBox, get_bbox, get_center, merge_nearby_bbox, rm_merge_overlap_bbox, to_rgb_img
+from .utils import get_unit_size, find_closest_staffs, get_global_unit_size
+from .logger import get_logger
+from .staffline_extraction import Staff
 
 # Globals
 nn_img: ndarray

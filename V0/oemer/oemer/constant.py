@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-from oemer.dense_dataset_definitions import DENSE_DATASET_DEFINITIONS as DEF
+from .dense_dataset_definitions import DENSE_DATASET_DEFINITIONS as DEF
 
 
 CLASS_CHANNEL_LIST = [

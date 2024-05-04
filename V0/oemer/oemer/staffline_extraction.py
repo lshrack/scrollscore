@@ -12,10 +12,10 @@ from scipy.signal import find_peaks
 from sklearn.cluster import KMeans
 from sklearn.linear_model import LinearRegression
 
-from oemer import layers
-from oemer import exceptions as E
-from oemer.logger import get_logger
-from oemer.bbox import BBox, find_lines, get_bbox, get_center
+from . import layers
+from . import exceptions as E
+from .logger import get_logger
+from .bbox import BBox, find_lines, get_bbox, get_center
 
 
 logger = get_logger(__name__)

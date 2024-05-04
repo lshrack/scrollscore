@@ -12,9 +12,9 @@ from numpy import ndarray
 from scipy.interpolate import interp1d, griddata
 from sklearn.linear_model import LinearRegression
 
-from oemer.morph import morph_open
-from oemer.logger import get_logger
-from oemer.bbox import BBox
+from .morph import morph_open
+from .logger import get_logger
+from .bbox import BBox
 
 
 logger = get_logger(__name__)

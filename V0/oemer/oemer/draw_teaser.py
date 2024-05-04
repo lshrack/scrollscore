@@ -5,10 +5,10 @@ from typing import List, Optional, Tuple, Union
 import cv2
 import numpy as np
 
-from oemer import layers
+from . import layers
 from numpy import ndarray
 
-from oemer.bbox import BBox
+from .bbox import BBox
 
 # Globals
 out: ndarray

@@ -14,18 +14,18 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import cv2
 import numpy as np
 
-from oemer import MODULE_PATH
-from oemer import layers
-from oemer.inference import inference
-from oemer.logger import get_logger
-from oemer.dewarp import estimate_coords, dewarp
-from oemer.staffline_extraction import extract as staff_extract
-from oemer.notehead_extraction import extract as note_extract
-from oemer.note_group_extraction import extract as group_extract
-from oemer.symbol_extraction import extract as symbol_extract
-from oemer.rhythm_extraction import extract as rhythm_extract
-from oemer.build_system import MusicXMLBuilder
-from oemer.draw_teaser import teaser
+from . import MODULE_PATH
+from . import layers
+from .inference import inference
+from .logger import get_logger
+from .dewarp import estimate_coords, dewarp
+from .staffline_extraction import extract as staff_extract
+from .notehead_extraction import extract as note_extract
+from .note_group_extraction import extract as group_extract
+from .symbol_extraction import extract as symbol_extract
+from .rhythm_extraction import extract as rhythm_extract
+from .build_system import MusicXMLBuilder
+from .draw_teaser import teaser
 
 
 logger = get_logger(__name__)
@@ -177,6 +177,10 @@ def extract(args: Namespace) -> str:
     logger.info("Extracting stafflines")
     staffs, zones = staff_extract()
     layers.register_layer("staffs", staffs)  # Array of 'Staff' instances
+    print(staffs[0][0], staffs[1][0])
+    for staff in staffs[0]:
+        print("group:", staff.group)
+        print("track:", staff.track)
     layers.register_layer("zones", zones)  # Range of each zones, array of 'range' object.
 
     # ---- Extract noteheads ---- #
@@ -265,9 +269,10 @@ def download_file(title: str, url: str, save_path: str) -> None:
         print(f"{title}: 100% {length}/{length}"+" "*20)
 
 
-def main() -> None:
-    parser = get_parser()
-    args = parser.parse_args()
+def main(args = None, with_teaser = True) -> str:
+    if args == None:
+        parser = get_parser()
+        args = parser.parse_args()
 
     if not os.path.exists(args.img_path):
         raise FileNotFoundError(f"The given image path doesn't exists: {args.img_path}")
@@ -285,9 +290,18 @@ def main() -> None:
 
     clear_data()
     mxl_path = extract(args)
-    img = teaser()
-    img.save(mxl_path.replace(".musicxml", "_teaser.png"))
 
+    if(with_teaser):
+        img = teaser()
+        img.save(mxl_path.replace(".musicxml", "_teaser.png"))
+
+    return mxl_path
+
+def call_ete(input_image, output_folder = './') -> str:
+    parser = get_parser()
+    args = parser.parse_args([input_image, '-o', output_folder])
+
+    return main(args, with_teaser = False)
 
 if __name__ == "__main__":
     main()

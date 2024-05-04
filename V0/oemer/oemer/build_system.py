@@ -10,12 +10,12 @@ from xml.etree.ElementTree import Element, SubElement
 import numpy as np
 from numpy import ndarray
 
-from oemer import layers
-from oemer.symbol_extraction import Barline, Clef, Sfn, Rest, SfnType, ClefType, RestType
-from oemer.note_group_extraction import NoteGroup
-from oemer.notehead_extraction import NoteHead, NoteType
-from oemer.utils import get_global_unit_size, get_total_track_nums
-from oemer.logger import get_logger
+from . import layers
+from .symbol_extraction import Barline, Clef, Sfn, Rest, SfnType, ClefType, RestType
+from .note_group_extraction import NoteGroup
+from .notehead_extraction import NoteHead, NoteType
+from .utils import get_global_unit_size, get_total_track_nums
+from .logger import get_logger
 
 
 logger = get_logger(__name__)
@@ -575,6 +575,7 @@ class MusicXMLBuilder:
 
         Action.clear()
         first_measure = self.measures[0][0]
+        print("Measure lengths", [len(measures) for measures in self.measures.values()])
         self.actions.append(AddInit(first_measure))
 
         cur_key = first_measure.get_key()
