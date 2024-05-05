@@ -14,8 +14,9 @@ for page, staff_box in (1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (2,1), (
                             'yPos': staff_box,
                             'pageNum': page})
 
-def get_sheet_music_graph(pdf_path):
+def get_sheet_music_graph(mxl_path):
     # implement later, once we get CNN working
+    
     pass
 
 def get_sheet_music_graph_temporary():
@@ -37,7 +38,6 @@ def match_audio_to_music(webm_path, ):
 
     sys.stdout = old_stdout
     
-
     match_start, match_end, match_factor = match_fixed((audio_notes, audio_note_times),
             (notes, note_times),
             start_indices)

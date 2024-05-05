@@ -39,7 +39,7 @@ function startRecording(){
         rec.start();
         console.log("Recording started");
 
-        interval = window.setInterval(saveFile, 7000);
+        interval = window.setInterval(saveFile, 12000);
 
         var chunks = [];
         rec.onstop = (e) => {
@@ -104,7 +104,7 @@ function createDownloadLink(blob){
         if(this.readyState === 4) {
             console.log("Server returned: ",e.target.responseText);
             $(document).ready(function() {
-                $("html, body").animate({ scrollTop: e.target.responseText * document.body.scrollHeight }, 100);
+                $("html, body").animate({ scrollTop: e.target.responseText * document.body.scrollHeight }, 1000);
             })
         }
     };

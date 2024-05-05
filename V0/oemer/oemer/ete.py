@@ -111,7 +111,7 @@ def register_note_id() -> None:
         notes[idx].id = idx
 
 
-def extract(args: Namespace) -> str:
+def extract(args: Namespace):
     img_path = Path(args.img_path)
     f_name = os.path.splitext(img_path.name)[0]
     pkl_path = img_path.parent / f"{f_name}.pkl"
@@ -176,11 +176,9 @@ def extract(args: Namespace) -> str:
     # ---- Extract staff lines and group informations ---- #
     logger.info("Extracting stafflines")
     staffs, zones = staff_extract()
+    staff_uppers = [staff_line.y_upper/staff.shape[0]
+                    for staff_line in staffs[0] if staff_line.track == 0]
     layers.register_layer("staffs", staffs)  # Array of 'Staff' instances
-    print(staffs[0][0], staffs[1][0])
-    for staff in staffs[0]:
-        print("group:", staff.group)
-        print("track:", staff.track)
     layers.register_layer("zones", zones)  # Range of each zones, array of 'range' object.
 
     # ---- Extract noteheads ---- #
@@ -228,7 +226,7 @@ def extract(args: Namespace) -> str:
     with open(out_path, "wb") as ff:
         ff.write(xml)
 
-    return out_path
+    return out_path, staff_uppers
 
 
 def get_parser() -> ArgumentParser:
@@ -289,17 +287,17 @@ def main(args = None, with_teaser = True) -> str:
             download_file(title, url, save_path)
 
     clear_data()
-    mxl_path = extract(args)
+    mxl_path, staff_uppers = extract(args)
 
     if(with_teaser):
         img = teaser()
         img.save(mxl_path.replace(".musicxml", "_teaser.png"))
 
-    return mxl_path
+    return mxl_path, staff_uppers
 
-def call_ete(input_image, output_folder = './') -> str:
+def call_ete(input_image, output_folder = './'):
     parser = get_parser()
-    args = parser.parse_args([input_image, '-o', output_folder])
+    args = parser.parse_args([input_image, '-o', output_folder, '--save-cache'])
 
     return main(args, with_teaser = False)
 

@@ -1,7 +1,7 @@
 #from png_to_midis import generate_midis
 import cv2
 import matplotlib.pyplot as plt
-from pdf_to_pngs import pdf_to_pngs
+from process_pdf import pdf_to_pngs
 from midi_graph import midi_list_to_graph, midi_to_graph, scale_times
 from audio_to_midi import audio_to_midi
 from comparator import match

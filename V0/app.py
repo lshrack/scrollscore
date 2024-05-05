@@ -7,6 +7,8 @@ import os
 import time
 from main import webm_to_y
 from process_pdf import pdf_to_mxls
+import midi_vec
+import shutil
 
 app = Flask(__name__)
 
@@ -33,13 +35,13 @@ def index():
                 os.remove(f)
 
         #return str(file_num * 200)
-        return webm_to_y(filepath, 11)
+        return midi_vec.sample_to_y(filepath)
+        #return webm_to_y(filepath, 11)
 
         #return render_template_string(template, pageNum = 1, request = "POST", yVal = 2000)
 
     else:
-        with open('intermediate_results/curr_pos.txt', 'w') as f:
-            f.write('0')
+        midi_vec.set_curr_pos(0)
         return render_template_string(template, pageNum = 1, yVal = 0, pdfName = '/static/concatenated_002.pdf')
 
 # Endpoint to trigger scrolling
@@ -61,17 +63,34 @@ def success():
     if request.method == 'POST':   
         f = request.files['file'] 
         filepath = f'static/user_pdfs/{f.filename}'
-        f.save(filepath)   
-        print("about to run PDF => MXLs")
-        print(pdf_to_mxls(filepath, 'intermediate_results/'))
+        if not os.path.isfile(filepath):
+            f.save(filepath)   
+            print("about to run PDF => MXLs")
+            print(pdf_to_mxls(filepath, 'intermediate_results/'))
+            midi_vec.set_curr_pos(0)
+
+        # [306, 706, 1105, 1504]
 
         with open('static/index.html', 'r') as file:
             template = file.read()
-        with open('intermediate_results/curr_pos.txt', 'w') as f:
-            f.write(str(0))
+
         return render_template_string(template, pdfName = filepath, yVal = 0)   
 
 
+def clear_directory(dir_path):
+    for file_name in os.listdir(dir_path):
+        file_path = os.path.join(dir_path, file_name)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+
+        except:
+            print('Failed to clear', dir_path, "- could not delete", file_path)
 
 if __name__ == '__main__':
+    clear_directory('static/user_pdfs')
+    clear_directory('intermediate_results')
+    clear_directory('audio_data')
     app.run(debug=True)

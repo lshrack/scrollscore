@@ -3,8 +3,8 @@ function renderPDF(url, canvasContainer, options) {
         
     function renderPage(page) {
         var viewport = page.getViewport({ scale: 1.5 });
-        //var wrapper = document.createElement("div");
-        var wrapper = document.getElementById("wrapper" + page.pageNumber.toString());
+        var wrapper = document.createElement("div");
+        //var wrapper = document.getElementById("wrapper" + page.pageNumber.toString());
         wrapper.className = "canvas-wrapper";
         var canvas = document.createElement('canvas');
         var ctx = canvas.getContext('2d');

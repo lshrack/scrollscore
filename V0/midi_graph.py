@@ -1,5 +1,6 @@
 from mido import MidiFile
 from mido.messages.messages import Message
+import music21
 
 def midi_to_graph(mid_path, include_end = False, filter_range = None):
     """
@@ -77,6 +78,42 @@ def midi_list_to_graph(mid_paths):
         prev_end += end
 
     return notes_all, note_times_all, start_indices
+
+def mxl_list_to_graph(mxl_paths):
+    start_indices = [0]
+    notes_all = []
+    note_times_all = []
+
+    for mxl_path in mxl_paths:
+        stream = music21.converter.parse(mxl_path)
+        parts = stream.elements
+
+        staffs = [part for part in parts
+                if type(part) == music21.stream.PartStaff
+                or type(part) == music21.stream.Part]
+
+        note_streams = []
+
+        for staff in staffs[0:1]:
+            measures = [el for el in staff.elements if type(el) == music21.stream.Measure]
+            note_stream = []
+
+            for measure in measures:
+                if type(measure.elements[0]) == music21.layout.SystemLayout:
+                    start_indices.append(len(notes_all))
+                for note in measure.notes:
+                    if type(note) == music21.note.Note:
+                        if(info == 'pitch'):
+                            note_stream.append(note.pitch.nameWithOctave)
+                        elif(info == 'length'):
+                            note_stream.append(note.quarterLength)
+                    else:
+                        if(info == 'pitch'):
+                            note_stream.append([note.pitch.nameWithOctave for note in note.notes])
+                        elif(info == 'length'):
+                            note_stream.append([note.quarterLength for note in note.notes])
+
+
 
 def scale_times(times, factor):
     return [time * factor for time in times]
