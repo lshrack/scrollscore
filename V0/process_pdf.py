@@ -3,6 +3,14 @@ from oemer.oemer import ete
 import midi_vec
 
 def pdf_to_mxls(pdf_path, output_folder):
+    """
+    Convert a PDF to a list of MusicXML files.
+
+    pdf_path: path to PDF
+    output_folder: folder to save intermediate results
+
+    Returns: list of paths to the MusicXML files
+    """
     pdf = pdfium.PdfDocument(pdf_path)
     n_pages = len(pdf)
 
