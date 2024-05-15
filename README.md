@@ -4,10 +4,19 @@ ScrollScore is a proof-of-concept implementation of a tool that automatically sc
 ## How to run ScrollScore:
 1. Install requirements using pip install -r requirements.txt. Using a Python virtual environment is strongly recommended.
 2. Install a working version of FFmpeg for your system, if you don't already have one: https://ffmpeg.org/
-3. In the V0 directory for the project, run python app.py to launch the tool.
+3. Run python app.py to launch the tool.
 4. The tool should now be running at http://127.0.0.1:5000/upload, where you can upload a PDF for conversion.
 
 ## Table of Contents:
+- archived_files: lots of old Python code - you can safely ignore this.
+- oemer: Slightly modified clone of the oemer OMR model. Outside code relies on oemer/oemer/ete.py.
+- static: Front end HTML, CSS, and JavaScript.
+    - index.html: main HTML page with PDF viewer
+    - upload.html: HTML page where PDFs can be uploaded
+    - styles.css: CSS styling
+    - js: folder of JavaScript files
+        - pdf.js: Renders PDFs
+        - record.js: Handles the front-end side of collecting and processing audio data.
 - app.py: Python for main Flask application
 - audio_to_midi.py: Converts an audio file to MIDI using basic-pitch.
 - comparator.py: Contains all of the code used to convert MIDIs and MusicXML files into vector representations and match samples into sheet music. The highest level function takes a webm file
