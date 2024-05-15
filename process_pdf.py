@@ -1,6 +1,6 @@
 import pypdfium2 as pdfium
 from oemer.oemer import ete
-import midi_vec
+import comparator
 
 def pdf_to_mxls(pdf_path, output_folder):
     """
