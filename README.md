@@ -1,4 +1,5 @@
-# ScrollScore V0 is a proof-of-concept implementation of a tool that automatically scrolls PDF sheet music based on microphone input.
+# ScrollScore
+ScrollScore is a proof-of-concept implementation of a tool that automatically scrolls PDF sheet music based on microphone input.
 
 ## How to run ScrollScore:
 1. Install requirements using pip install -r requirements.txt. Using a Python virtual environment is strongly recommended.
@@ -7,5 +8,9 @@
 4. The tool should now be running at http://127.0.0.1:5000/upload, where you can upload a PDF for conversion.
 
 ## Table of Contents:
-- V0/app.py: Python for main Flask application
-- V0/audio_to_midi.py
+- app.py: Python for main Flask application
+- audio_to_midi.py: Converts an audio file to MIDI using basic-pitch.
+- comparator.py: Contains all of the code used to convert MIDIs and MusicXML files into vector representations and match samples into sheet music. The highest level function takes a webm file
+and returns a y position for the appropriate staff bar. All functions have docstrings.
+- process_pdf.py: Converts a PDF to a list of MusicXMLs (one for each page of the PDF), and saves staffline positions.
+- webm_to_wav.py: Uses FFmpeg to convert .webm audio files into .wav audio files.

@@ -5,7 +5,7 @@ from fileinput import filename
 import os
 import shutil
 from process_pdf import pdf_to_mxls
-import midi_vec
+import comparator
 
 
 app = Flask(__name__)
