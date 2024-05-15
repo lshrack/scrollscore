@@ -36,10 +36,10 @@ def index():
                 os.remove(f)
 
         # convert the webm file to a scroll position
-        return midi_vec.sample_to_y(filepath)
+        return comparator.sample_to_y(filepath)
 
     else:
-        midi_vec.set_curr_pos(0)
+        comparator.set_curr_pos(0)
         return render_template_string(template, pageNum = 1, yVal = 0, pdfName = '/static/concatenated_002.pdf')
 
 # renders page for user to upload PDF
@@ -60,7 +60,7 @@ def success():
             print("Converting user PDF to MusicXML files...")
             pdf_to_mxls(filepath, 'intermediate_results/')
             
-        midi_vec.set_curr_pos(0)
+        comparator.set_curr_pos(0)
 
         with open('static/index.html', 'r') as file:
             template = file.read()

@@ -3,9 +3,9 @@ ScrollScore is a proof-of-concept implementation of a tool that automatically sc
 
 ## How to run ScrollScore:
 1. Clone the repository to your local machine.
-2. Install requirements using pip install -r requirements.txt. Using a Python virtual environment is strongly recommended.
+2. Create and activate a Python virtual environment - I used Python 3.10.7. Install requirements using pip install -r requirements.txt.
 3. Install a working version of FFmpeg for your system, if you don't already have one: https://ffmpeg.org/
-4. Run python app.py to launch the tool.
+4. Run python app.py to launch the tool. Wait for the message that it's running. You can safely ignore warnings about TFLite and TensorFlow not being installed.
 5. The tool should now be running at http://127.0.0.1:5000/upload, where you can upload a PDF for conversion. Wait for it to convert and load the PDF viewer (this will take several minutes), and then you can use the scrolling functionality.
 
 ## Table of Contents:

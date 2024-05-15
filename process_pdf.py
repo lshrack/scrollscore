@@ -26,7 +26,7 @@ def pdf_to_mxls(pdf_path, output_folder):
                           "y_pos": staff_uppers})
         
 
-    midi_vec.set_mxls(filepaths)
+    comparator.set_mxls(filepaths)
     return filepaths
 
 if __name__ == '__main__':
