@@ -8,23 +8,54 @@ import json
 output_folder = 'intermediate_results/'
 
 def set_mxls(mxls):
+    """
+    Save a list of dictionaries of MusicXML files and y-positions of stafflines to the
+    intermediate_results folder.
+
+    mxls: list of dictionaries in format {"filepath": <path_to_MusicXML>,
+                         "y_pos": <list of staffline y-positions as proportions of image height>}
+    """
     with open("intermediate_results/mxls.json", "w") as f:
         json.dump(mxls, f)
 
 def get_mxls():
+    """
+    Get dictionary of MusicXML files and y-positions of their stafflines.
+
+    Returns: list of dictionaries in format {"filepath": <path_to_MusicXML>,
+                         "y_pos": <list of staffline y-positions as proportions of image height>}
+    """
     with open("intermediate_results/mxls.json") as f:
         return json.load(f)
 
 def set_curr_pos(curr_pos):
+    """
+    Save the current position in the sheet music to the intermediate results folder.
+
+    curr_pos: Integer representing most recent index into vector representation of sheet music.
+    """
     with open('intermediate_results/curr_pos.txt', 'w') as f:
         f.write(str(curr_pos))
 
 def get_curr_pos():
+    """
+    Get the most recent position in the sheet music from the intermediate results folder.
+
+    Returns: Integer representing most recent index into vector representation of sheet music.
+    """
     with open('intermediate_results/curr_pos.txt') as f:
         return int(f.readline())
     
 
 def mxl_to_vec(filepath):
+    """
+    Converts a MusicXML file into a vector of notes and chords.
+
+    filepath: path to MusicXML file
+
+    Returns: vector representation of notes and chords in the MusicXML file
+    """
+
     start_indices = [0]
 
     stream = music21.converter.parse(filepath)
@@ -69,10 +100,6 @@ def mxl_to_vec(filepath):
 
         curr_time = 0
 
-        # remaining_notes = list(bass.notes)
-        # for voice in voices:
-        #     remaining_notes += list(voice.notes)
-
         for voice in [bass] + voices:
             curr_time = 0
             for note in voice.notes:
@@ -105,11 +132,20 @@ def mxl_to_vec(filepath):
     return note_stream, start_indices
 
 def midi_to_vec(filepath, filter_range = None):
+    """
+    Converts a MIDI file into a vector of notes and chords.
+
+    filepath: path to MIDI file
+    filter_range: optional tuple [min_pitch, max_pitch] to be used to filter out pitches outside
+    of a set range
+
+    Returns: vector representation of notes and chords in the MIDI file
+    """
 
     def in_filter_range(note):
         return (filter_range == None
-                or msg.note >= filter_range[0]
-                and msg.note <= filter_range[1])
+                or note >= filter_range[0]
+                and note <= filter_range[1])
     
     mid = MidiFile(filepath)
 
@@ -152,6 +188,15 @@ def midi_to_vec(filepath, filter_range = None):
     return [chord['notes'] for chord in notes]
 
 def mxls_to_vec(filepaths):
+    """
+    Convert a list of MusicXML files to a single vector representation (to be used for different
+    pages of sheet music).
+
+    filepaths: paths to MusicXML files
+
+    Returns: Concatenated vector of the MusicXML files, array of start indices for each
+    MusicXML file
+    """
     starts = []
     vec = []
     for i, filepath in enumerate(filepaths):
@@ -168,6 +213,16 @@ def mxls_to_vec(filepaths):
     return vec, starts
 
 def acc_rec(sample, sm, sample_i, sm_i, cache, offset = 0):
+    """
+    Recursive function to calculate the maximum match of a sample vector into a sheet music vector.
+
+    sample: vector of notes and chords in sample
+    sm: vector of notes and chords in sheet music
+    sample_i: start index into sample
+    sm_i: start index into sheet music
+    offset: Represents distance from current start position (sm_i) to the estimated actual start position.
+    
+    """
     def compute_score(sample_val, sm_val):
         return len(set(sample_val).intersection(set(sm_val)))
                 
@@ -206,6 +261,16 @@ def acc_rec(sample, sm, sample_i, sm_i, cache, offset = 0):
     return cache[(sample_i, sm_i)]
 
 def match(sample_midi, sm_mxls, start_index = 0):
+    """
+    Get the page number and staff box of the end position of the best match of a sample into
+    sheet music.
+
+    sample_midi: path to sample MIDI file
+    sm_mxls: list of paths to MusicXMLs for pages of sheet music
+    start_index: current estimate start position
+
+    Returns: page number of last note of best match, staff box index of last note of best match
+    """
     sm_vec, start_indices = mxls_to_vec(sm_mxls)
     filter_range = [min(min(x) for x in sm_vec), max(max(x) for x in sm_vec)]
 
@@ -230,30 +295,33 @@ def match(sample_midi, sm_mxls, start_index = 0):
     return start_indices[-1]["page_num"], start_indices[-1]["staff_box"]
 
 def sample_to_y(sample_webm):
+    """
+    Get the y-position of the best match of a WebM file into the current sheet music.
+
+    sample_webm: path to .webm sample
+
+    Returns: a string of the y position
+    """
+    # get the list of sheet music MusicXMLs and the current position
     mxls = get_mxls()
     curr_pos = get_curr_pos()
     assert len(mxls) > 0, "PDF wasn't loaded properly"
 
+    # convert the audio file to .wav and then to MIDI
     wav_path = save_as_wav(sample_webm)
     sample_midi = audio_to_midi(wav_path, output_folder)
 
+    # run the match function to find the page number and staff box of the best match
     page_num, staff_box = match(sample_midi,
                                 [mxl["filepath"] for mxl in mxls],
                                 curr_pos)
     
+    # convert the page number and staff box into a y position and return it
     y_pos = (mxls[page_num]['y_pos'][max(staff_box, 0)] + page_num) / len(mxls)
     print(y_pos)
 
     return str(y_pos)
 
-# _mxls = [{"filepath": "intermediate_results/Happy_Birthday_To_You_Piano_1.musicxml",
-#          "y_pos": [306, 706, 1105, 1504]}]
-
-# print(sample_to_y("intermediate_results/Happy_Birthday_To_You_Piano_basic_pitch.mid"))
-  
-# print(match("intermediate_results/Happy_Birthday_To_You_Piano_basic_pitch.mid",
-#             ["intermediate_results/Happy_Birthday_To_You_Piano_1.musicxml"],
-#             start_index = 0))
 
 
     
