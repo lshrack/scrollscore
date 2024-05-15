@@ -14,11 +14,6 @@ for page, staff_box in (1,1), (1,2), (1,3), (1,4), (1,5), (1,6), (1,7), (2,1), (
                             'yPos': staff_box,
                             'pageNum': page})
 
-def get_sheet_music_graph(mxl_path):
-    # implement later, once we get CNN working
-    
-    pass
-
 def get_sheet_music_graph_temporary():
     midi_filepaths = [midi['filename'] for midi in temp_midis]
     return midi_list_to_graph(midi_filepaths)

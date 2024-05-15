@@ -39,7 +39,7 @@ function startRecording(){
         rec.start();
         console.log("Recording started");
 
-        interval = window.setInterval(saveFile, 12000);
+        interval = window.setInterval(saveFile, 7000);
 
         var chunks = [];
         rec.onstop = (e) => {

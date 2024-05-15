@@ -167,7 +167,7 @@ def mxls_to_vec(filepaths):
     
     return vec, starts
 
-def acc_rec(sample, sm, sample_i, sm_i, cache):
+def acc_rec(sample, sm, sample_i, sm_i, cache, offset = 0):
     def compute_score(sample_val, sm_val):
         return len(set(sample_val).intersection(set(sm_val)))
                 
@@ -184,14 +184,17 @@ def acc_rec(sample, sm, sample_i, sm_i, cache):
             cache[(sample_i, sm_i)] = (score, sm_i)
             
         else:
-            match_here_score, match_here_end = acc_rec(sample, sm, sample_i + 1, sm_i + 1, cache)
+            match_here_score, match_here_end = acc_rec(sample, sm, sample_i + 1, sm_i + 1, cache, offset)
             match_here_score += score
+            if score == 0: match_here_score -= .5
+            match_here_score *= (0.95 ** max(offset, 0))
 
-            skip_sample_score, skip_sample_end = acc_rec(sample, sm, sample_i + 1, sm_i, cache)
-            skip_sample_score*=.98
 
-            skip_sm_score, skip_sm_end = acc_rec(sample, sm, sample_i, sm_i + 1, cache)
-            skip_sm_score*=.95
+            skip_sample_score, skip_sample_end = acc_rec(sample, sm, sample_i + 1, sm_i, cache, offset)
+            #skip_sample_score *= .98
+
+            skip_sm_score, skip_sm_end = acc_rec(sample, sm, sample_i, sm_i + 1, cache, offset - 1)
+            if offset <= 0: skip_sm_score *= .7
 
             if match_here_score >= skip_sample_score and match_here_score >= skip_sm_score:
                 cache[(sample_i, sm_i)] = match_here_score, match_here_end
@@ -207,8 +210,14 @@ def match(sample_midi, sm_mxls, start_index = 0):
     filter_range = [min(min(x) for x in sm_vec), max(max(x) for x in sm_vec)]
 
     sample_vec = midi_to_vec(sample_midi, filter_range)
+    print("Sample Vec:", sample_vec)
 
-    acc, index = acc_rec(sample_vec, sm_vec, 0, start_index, {})
+    OFFSET = 20
+
+    offset_start_index = max(start_index - OFFSET, 0)
+    actual_offset = start_index - offset_start_index
+
+    acc, index = acc_rec(sample_vec, sm_vec, 0, offset_start_index, {}, actual_offset)
     set_curr_pos(index)
     print(acc, index)
 
@@ -232,7 +241,7 @@ def sample_to_y(sample_webm):
                                 [mxl["filepath"] for mxl in mxls],
                                 curr_pos)
     
-    y_pos = (mxls[page_num]['y_pos'][staff_box] + page_num) / len(mxls)
+    y_pos = (mxls[page_num]['y_pos'][max(staff_box, 0)] + page_num) / len(mxls)
     print(y_pos)
 
     return str(y_pos)

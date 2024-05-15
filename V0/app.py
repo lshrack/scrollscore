@@ -5,10 +5,10 @@ from fileinput import filename
 import json
 import os
 import time
-from main import webm_to_y
+import shutil
 from process_pdf import pdf_to_mxls
 import midi_vec
-import shutil
+
 
 app = Flask(__name__)
 
@@ -67,7 +67,7 @@ def success():
             f.save(filepath)   
             print("about to run PDF => MXLs")
             print(pdf_to_mxls(filepath, 'intermediate_results/'))
-            midi_vec.set_curr_pos(0)
+        midi_vec.set_curr_pos(0)
 
         # [306, 706, 1105, 1504]
 
@@ -90,7 +90,8 @@ def clear_directory(dir_path):
             print('Failed to clear', dir_path, "- could not delete", file_path)
 
 if __name__ == '__main__':
-    clear_directory('static/user_pdfs')
-    clear_directory('intermediate_results')
-    clear_directory('audio_data')
+    if False:
+        clear_directory('static/user_pdfs')
+        clear_directory('intermediate_results')
+        clear_directory('audio_data')
     app.run(debug=True)
